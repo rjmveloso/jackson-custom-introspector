@@ -5,11 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collection;
 
-import org.codehaus.jackson.map.introspect.AnnotatedClass;
-import org.codehaus.jackson.map.introspect.AnnotatedMember;
-import org.codehaus.jackson.map.jsontype.NamedType;
-import org.codehaus.jackson.map.jsontype.SubtypeResolver;
 import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
 
 class SimpleSubTypeResolverTest {
 
@@ -17,16 +16,18 @@ class SimpleSubTypeResolverTest {
 	void testNoRegisteredSubTypes() {
 		SubtypeResolver resolver = new SimpleSubTypeResolver();
 
-		assertNotNull(resolver.collectAndResolveSubtypes((AnnotatedClass) null, null, null));
-		assertNotNull(resolver.collectAndResolveSubtypes((AnnotatedMember) null, null, null));
-		assertEquals(0, resolver.collectAndResolveSubtypes((AnnotatedMember) null, null, null).size());
+		assertNotNull(resolver.collectAndResolveSubtypesByClass(null, null));
+		assertNotNull(resolver.collectAndResolveSubtypesByClass(null, null, null));
+		assertNotNull(resolver.collectAndResolveSubtypesByTypeId(null, null));
+		assertNotNull(resolver.collectAndResolveSubtypesByTypeId(null, null, null));
+		assertEquals(0, resolver.collectAndResolveSubtypesByClass(null, null).size());
 	}
 
 	@Test
 	void testValidRegisteredSubTypesByClass() {
 		SubtypeResolver resolver = new SimpleSubTypeResolver();
 		resolver.registerSubtypes(SimpleSubTypeResolverTest.class);
-		Collection<NamedType> result = resolver.collectAndResolveSubtypes((AnnotatedClass) null, null, null);
+		Collection<NamedType> result = resolver.collectAndResolveSubtypesByClass(null, null);
 
 		assertEquals(1, result.size());
 		assertEquals(SimpleSubTypeResolverTest.class, result.iterator().next().getType());
@@ -36,7 +37,7 @@ class SimpleSubTypeResolverTest {
 	void testValidRegisteredSubTypesByNamedType() {
 		SubtypeResolver resolver = new SimpleSubTypeResolver();
 		resolver.registerSubtypes(new NamedType(SimpleSubTypeResolverTest.class));
-		Collection<NamedType> result = resolver.collectAndResolveSubtypes((AnnotatedClass) null, null, null);
+		Collection<NamedType> result = resolver.collectAndResolveSubtypesByClass(null, null);
 
 		assertEquals(1, result.size());
 		assertEquals(SimpleSubTypeResolverTest.class, result.iterator().next().getType());

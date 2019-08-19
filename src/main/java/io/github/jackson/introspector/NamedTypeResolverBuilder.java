@@ -2,16 +2,15 @@ package io.github.jackson.introspector;
 
 import java.util.Collection;
 
-import org.codehaus.jackson.annotate.JsonTypeInfo.As;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
-import org.codehaus.jackson.map.BeanProperty;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.TypeDeserializer;
-import org.codehaus.jackson.map.TypeSerializer;
-import org.codehaus.jackson.map.jsontype.NamedType;
-import org.codehaus.jackson.map.jsontype.impl.StdTypeResolverBuilder;
-import org.codehaus.jackson.type.JavaType;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
 
 /**
  * 
@@ -30,16 +29,16 @@ public class NamedTypeResolverBuilder extends StdTypeResolverBuilder {
 
 	@Override
 	public TypeSerializer buildTypeSerializer(SerializationConfig config, JavaType baseType,
-			Collection<NamedType> subtypes, BeanProperty property) {
+			Collection<NamedType> subtypes) {
 		JavaType assignable = findAssignableNamedType(baseType, subtypes);
-		return assignable != null ? super.buildTypeSerializer(config, baseType, subtypes, property) : null;
+		return assignable != null ? super.buildTypeSerializer(config, baseType, subtypes) : null;
 	}
 
 	@Override
 	public TypeDeserializer buildTypeDeserializer(DeserializationConfig config, JavaType baseType,
-			Collection<NamedType> subtypes, BeanProperty property) {
+			Collection<NamedType> subtypes) {
 		JavaType assignable = findAssignableNamedType(baseType, subtypes);
-		return assignable != null ? super.buildTypeDeserializer(config, baseType, subtypes, property) : null;
+		return assignable != null ? super.buildTypeDeserializer(config, baseType, subtypes) : null;
 	}
 
 	private JavaType findAssignableNamedType(JavaType baseType, Collection<NamedType> subtypes) {

@@ -2,12 +2,12 @@ package io.github.jackson.introspector;
 
 import java.util.Objects;
 
-import org.codehaus.jackson.map.MapperConfig;
-import org.codehaus.jackson.map.introspect.AnnotatedClass;
-import org.codehaus.jackson.map.introspect.AnnotatedMember;
-import org.codehaus.jackson.map.introspect.NopAnnotationIntrospector;
-import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
-import org.codehaus.jackson.type.JavaType;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.introspect.NopAnnotationIntrospector;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
 
 /**
  * Introspection mechanism that delegates all the logic to a TypeResolverBuilder.<br/>
@@ -17,6 +17,8 @@ import org.codehaus.jackson.type.JavaType;
  *
  */
 public class DelegateTypeResolverIntrospector extends NopAnnotationIntrospector {
+
+	private static final long serialVersionUID = 1L;
 
 	private TypeResolverBuilder<?> resolver = new NamedTypeResolverBuilder();
 

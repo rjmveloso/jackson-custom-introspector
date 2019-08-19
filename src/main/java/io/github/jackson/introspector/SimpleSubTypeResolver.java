@@ -3,13 +3,14 @@ package io.github.jackson.introspector;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.MapperConfig;
-import org.codehaus.jackson.map.introspect.AnnotatedClass;
-import org.codehaus.jackson.map.introspect.AnnotatedMember;
-import org.codehaus.jackson.map.jsontype.NamedType;
-import org.codehaus.jackson.map.jsontype.SubtypeResolver;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
 
 /**
  * This class acts just as an holder for registered sub-types.<br/>
@@ -31,22 +32,38 @@ public class SimpleSubTypeResolver extends SubtypeResolver {
 
 	@Override
 	public void registerSubtypes(Class<?>... classes) {
-		NamedType[] types = new NamedType[classes.length];
-		for (int i = 0; i < types.length; i++) {
-			types[i] = new NamedType(classes[i]);
-		}
-		registerSubtypes(types);
+		registerSubTypes(Stream.of(classes));
 	}
 
 	@Override
-	public Collection<NamedType> collectAndResolveSubtypes(AnnotatedMember property, MapperConfig<?> config,
-			AnnotationIntrospector ai) {
+	public void registerSubtypes(Collection<Class<?>> subtypes) {
+		registerSubTypes(subtypes.stream());
+	}
+
+	protected void registerSubTypes(Stream<Class<?>> stream) {
+		Object[] values = stream.map(NamedType::new).toArray(size -> new NamedType[size]);
+		registerSubtypes((NamedType[]) values);
+	}
+
+	@Override
+	public Collection<NamedType> collectAndResolveSubtypesByClass(MapperConfig<?> config, AnnotatedClass baseType) {
 		return subtypes;
 	}
 
 	@Override
-	public Collection<NamedType> collectAndResolveSubtypes(AnnotatedClass basetype, MapperConfig<?> config,
-			AnnotationIntrospector ai) {
+	public Collection<NamedType> collectAndResolveSubtypesByClass(MapperConfig<?> config, AnnotatedMember property,
+			JavaType baseType) {
+		return subtypes;
+	}
+
+	@Override
+	public Collection<NamedType> collectAndResolveSubtypesByTypeId(MapperConfig<?> config, AnnotatedClass baseType) {
+		return subtypes;
+	}
+
+	@Override
+	public Collection<NamedType> collectAndResolveSubtypesByTypeId(MapperConfig<?> config, AnnotatedMember property,
+			JavaType baseType) {
 		return subtypes;
 	}
 

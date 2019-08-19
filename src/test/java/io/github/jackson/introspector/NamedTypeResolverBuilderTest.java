@@ -9,31 +9,37 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonTypeInfo.As;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.TypeDeserializer;
-import org.codehaus.jackson.map.TypeSerializer;
-import org.codehaus.jackson.map.jsontype.NamedType;
-import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
-import org.codehaus.jackson.map.jsontype.impl.AsPropertyTypeDeserializer;
-import org.codehaus.jackson.map.jsontype.impl.AsPropertyTypeSerializer;
-import org.codehaus.jackson.map.type.SimpleType;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
 import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.cfg.BaseSettings;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer;
+import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeSerializer;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 class NamedTypeResolverBuilderTest {
 
-	private static final JavaType BASE_TYPE = SimpleType.construct(NamedTypeResolverBuilder.class);
+	private static final JavaType BASE_TYPE = TypeFactory.defaultInstance()
+			.constructSimpleType(NamedTypeResolverBuilder.class, null);
+
 	private static final List<NamedType> SUB_TYPES = Arrays.asList(new NamedType(NamedTypeResolverBuilder.class));
+
+	private static final BaseSettings SETTINGS = new BaseSettings(null, null, null, TypeFactory.defaultInstance(), null,
+			null, null, null, null, null);
 
 	@Test
 	void testNullSubtypesProvided() {
 		TypeResolverBuilder<?> resolver = new NamedTypeResolverBuilder();
-		TypeSerializer serializer = resolver.buildTypeSerializer(null, null, Collections.emptyList(), null);
-		TypeDeserializer deserializer = resolver.buildTypeDeserializer(null, null, Collections.emptyList(), null);
+		TypeSerializer serializer = resolver.buildTypeSerializer(null, null, Collections.emptyList());
+		TypeDeserializer deserializer = resolver.buildTypeDeserializer(null, null, Collections.emptyList());
 
 		assertNull(serializer);
 		assertNull(deserializer);
@@ -42,8 +48,8 @@ class NamedTypeResolverBuilderTest {
 	@Test
 	void testEmptySubtypesProvided() {
 		TypeResolverBuilder<?> resolver = new NamedTypeResolverBuilder();
-		TypeSerializer serializer = resolver.buildTypeSerializer(null, null, Collections.emptyList(), null);
-		TypeDeserializer deserializer = resolver.buildTypeDeserializer(null, null, Collections.emptyList(), null);
+		TypeSerializer serializer = resolver.buildTypeSerializer(null, null, Collections.emptyList());
+		TypeDeserializer deserializer = resolver.buildTypeDeserializer(null, null, Collections.emptyList());
 
 		assertNull(serializer);
 		assertNull(deserializer);
@@ -51,10 +57,10 @@ class NamedTypeResolverBuilderTest {
 
 	@Test
 	void testValidTypeSerializer() {
-		SerializationConfig config = new SerializationConfig(null, null, null, null, null, null, null);
+		SerializationConfig config = new SerializationConfig(SETTINGS, null, null, null, null);
 
 		TypeResolverBuilder<?> resolver = new NamedTypeResolverBuilder();
-		TypeSerializer serializer = resolver.buildTypeSerializer(config, BASE_TYPE, SUB_TYPES, null);
+		TypeSerializer serializer = resolver.buildTypeSerializer(config, BASE_TYPE, SUB_TYPES);
 
 		assertNotNull(serializer);
 		assertSame(AsPropertyTypeSerializer.class, serializer.getClass());
@@ -62,11 +68,10 @@ class NamedTypeResolverBuilderTest {
 
 	@Test
 	void testValidTypeDeserializer() {
-		DeserializationConfig config = new DeserializationConfig(
-				null, null, null, null, null, TypeFactory.defaultInstance(), null);
+		DeserializationConfig config = new DeserializationConfig(SETTINGS, null, null, null, null);
 
 		TypeResolverBuilder<?> resolver = new NamedTypeResolverBuilder();
-		TypeDeserializer deserializer = resolver.buildTypeDeserializer(config, BASE_TYPE, SUB_TYPES, null);
+		TypeDeserializer deserializer = resolver.buildTypeDeserializer(config, BASE_TYPE, SUB_TYPES);
 
 		assertNotNull(deserializer);
 		assertSame(AsPropertyTypeDeserializer.class, deserializer.getClass());
@@ -74,10 +79,10 @@ class NamedTypeResolverBuilderTest {
 
 	@Test
 	void testCustomTypeIdResolver() {
-		SerializationConfig config = new SerializationConfig(null, null, null, null, null, null, null);
+		SerializationConfig config = new SerializationConfig(SETTINGS, null, null, null, null);
 
 		TypeResolverBuilder<?> resolver = new NamedTypeResolverBuilder(Id.CLASS, "custom");
-		TypeSerializer serializer = resolver.buildTypeSerializer(config, BASE_TYPE, SUB_TYPES, null);
+		TypeSerializer serializer = resolver.buildTypeSerializer(config, BASE_TYPE, SUB_TYPES);
 
 		assertNotNull(serializer);
 		assertEquals(Id.CLASS, serializer.getTypeIdResolver().getMechanism());

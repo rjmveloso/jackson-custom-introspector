@@ -6,8 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.codehaus.jackson.map.jsontype.TypeResolverBuilder;
 import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
 
 class DelegateTypeResolverIntrospectorTest {
 
